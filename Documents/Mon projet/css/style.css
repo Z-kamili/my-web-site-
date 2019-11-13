@@ -1,0 +1,71 @@
+/*generale*/
+body{
+    background-color: white;
+    font-family: 'Lato',sans-serif;
+}
+/*Nav*/
+.navbar{
+    background: rgb(7, 7, 53);
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.navbar-nav li a{
+    color: #fff !important;
+}
+
+.navbar-nav li a:hover, .navbar-nav li.active a
+{
+    color: rgb(7, 7, 53) !important;
+    background-color: #fff !important ;
+}
+/*Service*/
+#service h2{
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+#service{
+    background: white;
+}
+
+.heading{
+
+    text-align: center;
+}
+.S2-block{
+
+    width:100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    border:2px solid black;
+    margin-bottom: 20px;
+}
+button{
+
+    background-color: rgb(7, 7, 53);
+    color: white;
+    height: 50px;
+    width: 200px;;
+    border-radius: 15px;
+    list-style: none;
+}
+p{
+    font-family: 'Lato',sans-serif;
+}
+/*Partenaire*/
+.row.para{
+
+    margin-left: 100px;;
+}
+/*footer*/
+
+footer{
+    background: rgb(7, 7, 53);
+    padding: 20px 0 40px;
+    color: white;
+}
