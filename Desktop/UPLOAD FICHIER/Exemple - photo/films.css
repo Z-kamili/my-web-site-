@@ -1,0 +1,21 @@
+/*------------------------------------
+* La feuille de style du site Films
+*------------------------------------
+*/
+
+/* Le fond est toujours en blanc    */
+
+BODY {background-color: white}
+
+/* On utilise une couleur rouge pour les ancres
+ * et les entêtes
+*/
+
+A, H1, H2, H3 {color: #ca0000}
+
+CAPTION {font-size:large; color: #ca0000}
+
+/* Alternance des couleurs pour les lignes des tables */
+
+TR.A0 {background-color:white}
+TR.A1 {background-color:yellow}
