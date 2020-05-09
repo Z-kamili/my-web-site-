@@ -9,6 +9,8 @@ import { CoursesService } from './courses.service';
 import { EmailService } from './email.service';
 import { StartComponent } from './start/start.component';
 import { ResumePipe } from './resume.pipe';
+import { FavoriteComponent } from './favorite/favorite.component';
+import { PanelComponent } from './panel/panel.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { ResumePipe } from './resume.pipe';
     CoursesComponent,
     CourseComponent,
     StartComponent,
-    ResumePipe
+    ResumePipe,
+    FavoriteComponent,
+    PanelComponent
   ],
   imports: [
     BrowserModule,

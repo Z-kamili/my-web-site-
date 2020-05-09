@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import {Component,OnInit,Input,Output,EventEmitter} from '@angular/core';
 @Component({
   selector: 'app-start',
   templateUrl: './start.component.html',
-  styleUrls: ['./start.component.css']
+  styleUrls: ['./start.component.css'],
 })
 export class StartComponent implements OnInit {
-isfavorite = true;
+@Input('is-fav')  isSelected = true;
   constructor() { }
   ngOnInit(): void {
   }
+  @Output("change") click = new EventEmitter();
   onclick(){
- this.isfavorite = !this.isfavorite;
+ this.isSelected = !this.isSelected;
+ this.click.emit({newState:this.isSelected});
  }
 }

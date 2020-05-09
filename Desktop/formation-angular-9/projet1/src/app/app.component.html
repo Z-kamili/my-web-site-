@@ -1,7 +1,15 @@
 <h1>Notre premier application</h1>
 <courses></courses>
-<app-start></app-start>
-<p>{{body}}</p>
+<app-start [is-fav]="post.isFavorite" (change)="maFonction($event)"></app-start>
+<panel>
+    <div class="header">This is the header</div>
+    <div class="body">
+
+        <h3>This is the content</h3>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quisquam laborum necessitatibus nulla corporis quod quidem impedit sapiente sit. Obcaecati, ipsam cupiditate. Id culpa soluta, non corporis at suscipit cupiditate aperiam!</p>
+
+    </div>
+</panel>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
