@@ -1,1 +1,14 @@
-<span id="start" (click)="onclick()" [class]="isSelected? 'glyphicon glyphicon-star':'glyphicon glyphicon-star-empty'"></span>
+<span id="start" (click)="onclick()" 
+[ngClass]="{
+    'glyphicon-star':isSelected,
+     'glyphicon-star-empty':!isSelected
+}"
+[ngStyle]="{
+    'color':isSelected ? 'red' : 'blue',
+    'font-size':isSelected ? '40px' : '20px'
+}"
+>
+
+
+
+</span>

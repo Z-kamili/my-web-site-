@@ -1,15 +1,24 @@
-<h1>Notre premier application</h1>
-<courses></courses>
-<app-start [is-fav]="post.isFavorite" (change)="maFonction($event)"></app-start>
-<panel>
-    <div class="header">This is the header</div>
-    <div class="body">
 
-        <h3>This is the content</h3>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quisquam laborum necessitatibus nulla corporis quod quidem impedit sapiente sit. Obcaecati, ipsam cupiditate. Id culpa soluta, non corporis at suscipit cupiditate aperiam!</p>
+<!-- <button (click)="loadcourses()">Load</button>
+<ul>
+    <button class="btn btn-success" (click)="AddCourse()">Ajoute</button>
+    <li *ngFor="let course of courses; trackBy:trackCourse">
+        {{course.id}} {{course.title}}
+        
+        <button class="btn btn-danger" (click)="removeCourse(course)">Delete</button>
+        <button class="btn btn-warning" (click)="EditeCourse(course)">Edit</button>
+    </li>
+</ul>
 
+<app-start></app-start> -->
+<!-- <p *ngIf="personne.adress != null">{{personne.adress.ville}}</p> -->
+<!-- <input type="text"  [appInputFormat]="'lowercase'"> -->
+<br>
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+        <contact-form></contact-form>
     </div>
-</panel>
+</div>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->

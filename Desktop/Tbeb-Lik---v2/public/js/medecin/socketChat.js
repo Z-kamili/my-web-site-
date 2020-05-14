@@ -3,9 +3,8 @@ let __PEER;
 // 
 // 
 __GLOBAL_SOCKET.on('connect', async () => {
-    console.log('Socket Connected ! userId => ', sessionStorage.getItem('matricule') || null);
-    await __GLOBAL_SOCKET.emit('newUser', sessionStorage.getItem('matricule'));
-    await joinRoom();
+    console.log('Socket Connected ! userId => ', localStorage.getItem('matricule') || null);
+    await __GLOBAL_SOCKET.emit('newUser', localStorage.getItem('matricule'));
 });
 // 
 __GLOBAL_SOCKET.on('receiveMsg', msg => {
@@ -15,7 +14,7 @@ __GLOBAL_SOCKET.on('receiveMsg', msg => {
 // 
 async function joinRoom() {
     const _URL_PARAMS = new URLSearchParams(window.location.search);
-    await __GLOBAL_SOCKET.emit('joinChat', sessionStorage.getItem('matricule'), _URL_PARAMS.get('room'), _URL_PARAMS.get('patient'));
+    await __GLOBAL_SOCKET.emit('joinChat', localStorage.getItem('matricule'), _URL_PARAMS.get('room'), _URL_PARAMS.get('patient'));
 }
 // 
 async function sendMsg(content) {
@@ -53,6 +52,8 @@ async function streaminit() {
         // console.log('stream()');
         console.log('streaminit() / stream() | stream => ', stream);
         document.getElementById('remoteVideo').srcObject = stream;
+        // 
+        controllPosters("none");
         // document.getElementById('remoteVideoPoster').style.display = "none";
     });
     // 
@@ -65,6 +66,8 @@ __GLOBAL_SOCKET.on('liveStreamDataFlux', answer => {
 __GLOBAL_SOCKET.on('patientLinkFailed', () => {
     __PEER.destroy();
     document.getElementById('clientVideo').srcObject = null;
+    // 
+    controllPosters("flex");
 });
 // 
 __GLOBAL_SOCKET.on('liveStreamTerminated', () => {
@@ -76,6 +79,8 @@ __GLOBAL_SOCKET.on('liveStreamTerminated', () => {
         stream.getTracks().forEach(function (track) {
             track.stop();
         });
+        // 
+        controllPosters("flex");
         // document.getElementById('remoteVideoPoster').style.display = "flex";
     }
 });
@@ -93,14 +98,19 @@ function endCall() {
         });
         // 
         __GLOBAL_SOCKET.emit('endCall');
+        // 
+        controllPosters("flex");
         // document.getElementById('remoteVideoPoster').style.display = "flex";
     }
 }
 // 
 function micControll() {
+    switchIconMic(stream.getAudioTracks()[0].enabled);
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
 }
 
 function camControll() {
+    switchIconCam(stream.getVideoTracks()[0].enabled);
     stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
 }
+// 

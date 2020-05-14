@@ -1,4 +1,15 @@
 $(document).ready(async () => {
+    var notifs = document.getElementsByClassName('notification');
+    var notifsClose = document.getElementsByClassName('notifClose');
+    for (let i = 0; i < notifsClose.length; i++) {
+        notifsClose[i].addEventListener('click', () => {
+            notifs[i].setAttribute('class', 'notification notif-inactive');
+            updateCounter();
+        });
+    }
+    // 
+    // 
+    // 
     let response = await $.post('/listeConsultationFields', {}).promise();
     response = JSON.parse(response);
     console.log('/listeConsultationFields | response => ', response);
@@ -28,15 +39,53 @@ $(document).ready(async () => {
     // CHECK IF THE PATIENT HAVE ANY ONGOING NOTIFICATIONS
     // IF YES ADD A BTN FOR HIM TO GO TO THE CONTACT PAGE
     let exists = await $.post('/getAccessNotif', {
-        matricule: sessionStorage.getItem('matricule') || null
+        matricule: localStorage.getItem('matricule') || null
     }).promise();
     // exists = Boolean(exists);
     console.log('/getAccessNotif | exists => ', exists);
-    if (exists != 'false')
+    if (exists != 'false') {
         addNotification();
+        // waiting();
+    }
+    // 
+    // 
+    let notAcceptedRequests = await $.post('/getNotYetAcceptedRequest', {
+        matricule: localStorage.getItem('matricule') || null
+    }).promise();
+    // 
+    if (notAcceptedRequests != 'false') {
+        waiting();
+    }
+
+
 });
+// 
+var state = false,
+    style = ["flex", "none"];
+document.getElementById('btnNotif').addEventListener('click', (e) => {
+    if (e.target == document.getElementById('btnNotif').children[0])
+        document.getElementById('notifsContainer').style.display = style[+state];
+    state = !state;
+    if (state)
+        updateCounter();
+});
+// 
+// 
+function updateCounter() {
+    var count = 0;
+    var notifs = document.getElementsByClassName('notification');
+    for (let i = 0; i < notifs.length; i++) {
+        if (notifs[i].classList.length == 1)
+            count++;
+    }
+    // 
+    document.getElementById('notificationsCounter').innerText = count;
+}
+// 
 // 
 function addNotification() {
     // MAYBE SOME SALT AND FLAVORS HERE
-    document.body.appendChild(createNotification());
+    // document.body.appendChild(createNotification());
+    addNotification();
 }
+// 

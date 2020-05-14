@@ -16,6 +16,7 @@ __APP.use(__EXPRESS.urlencoded({
     extended: true
 }));
 __APP.use(__EXPRESS.json());
+__APP.use(__EXPRESS.static(__dirname));
 __APP.use(__EXPRESS.static(__PATH.join(__dirname, 'public')));
 // 
 // NOTIICATIONS SYSTEM NAMESPACE
@@ -197,8 +198,8 @@ __IO.on('connection', socket => {
     });
     socket.on('disconnect', async () => {
         console.log('--------');
-        let socketId = socket.id;
-        let appUserData = await _DB.getAppUserCustomDataBySocket(["ID_USER", "TYPE_USER", "MATRICULE_MED"], socketId);
+        // let socketId = socket.id;
+        let appUserData = await _DB.getAppUserCustomDataBySocket(["ID_USER", "TYPE_USER", "MATRICULE_MED"], socket.id);
         console.log('disconnect() | appUserData => ', appUserData);
         if (appUserData != null) {
             // IF A USER DISCONNECTS SET THEIR STATUS TO OFFLINE
@@ -208,6 +209,11 @@ __IO.on('connection', socket => {
                 table: "appUser",
                 id: "ID_USER"
             });
+            // 
+            // if (appUserData.TYPE_USER == "Medecin") {
+            // unlinkMedecinFromRooms()
+            // console.log(`disconnect() | updatingRoomData => `, updatingRoomData);
+            // }
             // 
             console.log('disconnect() | updatingResult => ', updatingResult);
         }
@@ -259,6 +265,34 @@ __IO.on('connection', socket => {
         // 
         return msgObject;
     }
+    // 
+    socket.on('cancelRequest', async (patientId) => {
+        let nId = null;
+        console.log('cancelRequest() | patientId => ', patientId);
+        if (patientId != null) {
+            nId = await _DB.getLastInsertedNotification(patientId);
+            console.log('cancelRequest() | nId => ', nId);
+            if (nId != null) {
+                nId = nId.ID_PRECONS;
+                let deleteFromPreConsultation = await _DB.customDataDelete({
+                    table: "preConsultation",
+                    id: "ID_PRECONS"
+                }, nId);
+                console.log(`cancelRequest() | deleteFromPreConsultation => `, deleteFromPreConsultation);
+                // 
+                let deleteFromMedecinInbox = await _DB.customDataDelete({
+                    table: "medecinInbox",
+                    id: "ID_PRECONS"
+                }, nId);
+                console.log(`cancelRequest() | deleteFromMedecinInbox => `, deleteFromMedecinInbox);
+                // 
+                __HUB.emit('removeNotificationBox', nId);
+                // SEND BACK TOTHE SANEDER
+                socket.emit('cancelRequestSuccess');
+            }
+        }
+
+    });
     // 
     // 
     // VIDEO
@@ -416,14 +450,45 @@ __APP.post('/getMesssages', async (req, res) => {
     let retData = [];
     if (req.body.matricule != null) {
         let room = await _DB.getDataAll('room', `where MATRICULE_PAT = '${req.body.matricule}' or MATRICULE_MED = '${req.body.matricule}'`);
-        if (room.length > 0) {
-            let msgs = await _DB.getDataAll('message', `where ID_ROOM = '${room[0].ID_ROOM}'`);
+        room = room[0];
+        if (req.body.room.length > 0)
+            room.ID_ROOM = req.body.room;
+        console.log(`getMesssages() | room => `, room);
+        if (Object.keys(room).length > 0) {
+            let msgs = await _DB.getDataAll('message', `where ID_ROOM = '${room.ID_ROOM}' order by DATE_ENVOI asc`);
             if (msgs.length > 0)
                 retData = msgs;
             else console.log('/getMesssages | msgs = no messages !');
         } else console.log('/getMesssages | room not found');
     } else console.log('/getMesssages | matricule = null');
     res.end(JSON.stringify(retData));
+});
+// 
+__APP.post('/getNotYetAcceptedRequest', async (req, res) => {
+    console.log('******');
+    let retData = false;
+    if (req.body.matricule != null)
+        retData = await _DB.getNotacceptedYetNotifs(req.body.matricule);
+    res.end(retData.toString());
+});
+// 
+__APP.post('/finalizeConsultation', async (req, res) => {
+    let status = false;
+    let notifId = await _DB.getNotifIdByRoomId(req.body.room, req.body.matricule);
+    console.log(`finalizeConsultation() | notifId => `, notifId);
+    if (notifId != null) {
+        let consultationFinished = await _DB.customDataUpdate({
+            JOUR_REPOS: 1
+        }, notifId, {
+            table: "consultation",
+            id: "ID_PRECONS"
+        });
+        console.log('finalizeConsultation() | consultationFinished => ', consultationFinished);
+        // 
+        status = Boolean(consultationFinished);
+    }
+    // 
+    res.end(status.toString());
 });
 // __APP.post('/')
 // 

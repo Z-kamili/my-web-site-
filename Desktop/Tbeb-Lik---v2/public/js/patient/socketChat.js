@@ -1,8 +1,8 @@
 const __GLOBAL_SOCKET = io();
 // 
 __GLOBAL_SOCKET.on('connect', async () => {
-    console.log('Socket Connected ! userId => ', sessionStorage.getItem('matricule') || null);
-    await __GLOBAL_SOCKET.emit('newUser', sessionStorage.getItem('matricule'));
+    console.log('Socket Connected ! userId => ', localStorage.getItem('matricule') || null);
+    await __GLOBAL_SOCKET.emit('newUser', localStorage.getItem('matricule'));
 });
 // 
 __GLOBAL_SOCKET.on('receiveMsg', msg => {
@@ -14,6 +14,9 @@ let stream = null;
 __GLOBAL_SOCKET.on('liveStreamDataFlux', async (offer) => {
     // let status = ;
     if (confirm('Votre medecin est entrain de vous appelle.')) {
+        videoChatIconsControlls();
+        showVideoBox();
+        // 
         stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
@@ -31,6 +34,10 @@ __GLOBAL_SOCKET.on('liveStreamDataFlux', async (offer) => {
         __PEER.on('stream', function (stream) {
             console.log('liveStreamDataFlux() / stream() | stream => ', stream);
             document.getElementById('remoteVideo').srcObject = stream;
+            // 
+            controllPosters("none");
+            // document.getElementById('remoteVideoPoster').style.display = "none";
+            // document.getElementById('hostVideoPoster').style.display = "none";
             // document.getElementById('remoteVideoPoster').style.display = "none";
             // console.log('Stream()');
         });
@@ -57,7 +64,12 @@ __GLOBAL_SOCKET.on('liveStreamTerminated', () => {
         stream.getTracks().forEach(function (track) {
             track.stop();
         });
+        // 
+        controllPosters("flex");
+        // 
+        hideVideoBox();
         // document.getElementById('remoteVideoPoster').style.display = "flex";
+        // document.getElementById('hostVideoPoster').style.display = "flex";
     }
 });
 
@@ -78,15 +90,34 @@ function endCall() {
         });
         // 
         __GLOBAL_SOCKET.emit('endCall');
+        // 
+        controllPosters("flex");
+        // 
+        hideVideoBox();
         // document.getElementById('remoteVideoPoster').style.display = "flex";
     }
 }
 
 // 
 function micControll() {
+    switchIconMic(stream.getAudioTracks()[0].enabled);
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
 }
 
 function camControll() {
+    switchIconCam(stream.getVideoTracks()[0].enabled);
     stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
+}
+// 
+// 
+function showVideoBox() {
+    document.getElementById('videoSection').style.display = "flex";
+    document.getElementById('chatSection').style.height = "500px !important";
+    showVideoSection();
+}
+
+function hideVideoBox() {
+    document.getElementById('videoSection').style.display = "none";
+    document.getElementById('chatSection').style.height = "90 vh";
+    hideVideoSection();
 }

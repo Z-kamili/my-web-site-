@@ -1,8 +1,8 @@
 const __GLOBAL_SOCKET = io();
 // 
 __GLOBAL_SOCKET.on('connect', () => {
-    console.log('Socket Connected ! userId => ', sessionStorage.getItem('matricule') || null);
-    __GLOBAL_SOCKET.emit('newUser', sessionStorage.getItem('matricule'));
+    console.log('Socket Connected ! userId => ', localStorage.getItem('matricule') || null);
+    __GLOBAL_SOCKET.emit('newUser', localStorage.getItem('matricule'));
 });
 __GLOBAL_SOCKET.on('queryResult', data => {
     switch (data.status) {
@@ -13,6 +13,7 @@ __GLOBAL_SOCKET.on('queryResult', data => {
             alert('Vous avez deja un demande en cours');
             break;
         case 2:
+            waiting();
             alert(`demande envoyer à ${data.data} Medecin(s)`);
             break;
         default:
@@ -20,8 +21,14 @@ __GLOBAL_SOCKET.on('queryResult', data => {
     }
 });
 __GLOBAL_SOCKET.on('notificationAccepted', () => {
-    console.log('braah');
-    addNotification();
+    // addNotification();
+    window.location.assign('/patient/contact');
+});
+// 
+__GLOBAL_SOCKET.on('cancelRequestSuccess', () => {
+    if (document.getElementById('waitingConsultation')) {
+        document.getElementById('waitingConsultation').remove();
+    }
 });
 // FUNCTIONS
 //#region 
@@ -30,5 +37,10 @@ function sendNotification(ville, proffession) {
         ville,
         proffession
     });
+    // 
+}
+
+function canceRequest() {
+    __GLOBAL_SOCKET.emit('cancelRequest', localStorage.getItem('matricule') || null);
 }
 //#endregion

@@ -286,6 +286,46 @@ async function getRoomIdBySocketId(socketId) {
     }
 }
 // 
+async function getNotacceptedYetNotifs(patientId) {
+    try {
+        let req = `select * from preConsultation where MATRICULE_PAT = ? and ID_PRECONS not in(select ID_PRECONS from consultation)`,
+            cnx = await db.connect(),
+            res = await cnx.query(req, [patientId]);
+        cnx.release();
+        // 
+        return res[0].length > 0 ? true : false;
+    } catch (err) {
+        console.error('error :', err);
+    }
+}
+// 
+async function getNotifIdByRoomId(roomId, medecinId) {
+    try {
+        let req = `SELECT p.ID_PRECONS FROM preConsultation AS p,room AS r WHERE p.MATRICULE_PAT = r.MATRICULE_PAT AND r.ID_ROOM = ? AND r.MATRICULE_MED = ? AND p.ID_PRECONS in (SELECT ID_PRECONS FROM consultation WHERE JOUR_REPOS = -1)`,
+            cnx = await db.connect(),
+            res = await cnx.query(req, [roomId, medecinId]);
+        cnx.release();
+        // 
+        return res[0].length > 0 ? res[0][0].ID_PRECONS : null;
+    } catch (err) {
+        console.error('error :', err);
+    }
+}
+// 
+// EXAMPLE OF params = {table : "ss",id : "userId"}
+async function customDataDelete(params, id) {
+    try {
+        let req = `DELETE FROM ${params.table} WHERE ${params.id} = ?`,
+            cnx = await db.connect(),
+            res = await cnx.query(req, [id]);
+        cnx.release();
+        // 
+        return res[0].affectedRows;
+    } catch (err) {
+        console.error('error :', err);
+    }
+}
+// 
 //#endregion
 // 
 //#region HELPER FUNCTIONS
@@ -342,6 +382,9 @@ module.exports = {
     notificationsByMedecin,
     getAcceptedMedecinNotificationsInfos,
     checkPatientActiveNotifsExistance,
-    getRoomIdBySocketId
+    getRoomIdBySocketId,
+    getNotacceptedYetNotifs,
+    getNotifIdByRoomId,
+    customDataDelete
 }
 // 

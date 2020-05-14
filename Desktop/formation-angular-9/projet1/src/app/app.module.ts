@@ -11,6 +11,8 @@ import { StartComponent } from './start/start.component';
 import { ResumePipe } from './resume.pipe';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { PanelComponent } from './panel/panel.component';
+import { InputFormatDirective } from './input-format.directive';
+import { ContactFormComponent } from './contact-form/contact-form.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { PanelComponent } from './panel/panel.component';
     StartComponent,
     ResumePipe,
     FavoriteComponent,
-    PanelComponent
+    PanelComponent,
+    InputFormatDirective,
+    ContactFormComponent
   ],
   imports: [
     BrowserModule,
